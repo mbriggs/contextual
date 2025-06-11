@@ -63,3 +63,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "simplecov", "~> 0.22.0", group: :test
+
+gem "rails_best_practices", "~> 1.23", groups: [ :development, :test ]
+
+gem "rack-mini-profiler", "~> 4.0", group: :development

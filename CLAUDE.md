@@ -30,8 +30,10 @@ This is a Rails 8.0 application called "Contextual" using:
 
 ### Code Quality
 - `bundle exec rubocop` - Run Ruby linting with Rails Omakase style guide
-- `bundle exec rubocop -a` - Auto-fix linting issues
+- `bundle exec rubocop -A` - Auto-fix linting issues
 - `bundle exec brakeman` - Run security vulnerability analysis
+- `bundle exec rails_best_practices .` - Run Rails-specific quality checks
+- `bin/rails test` - Run tests with SimpleCov coverage reporting (90% minimum)
 
 ## Architecture Notes
 
