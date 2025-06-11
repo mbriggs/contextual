@@ -56,6 +56,15 @@ bin/rails db:reset             # Drop, create, and migrate database
 bin/rails db:seed              # Load seed data
 ```
 
+### Database Inspection [DEBUGGING]
+```bash
+# Use Rails runner to inspect database
+bin/rails runner "puts Post.count"                    # Count posts
+bin/rails runner "puts Post.all.pluck(:status)"       # Check post statuses
+bin/rails runner "puts Comment.count"                 # Count comments
+bin/rails runner "p Post.first.attributes"            # Inspect first post
+```
+
 ## PROJECT-SPECIFIC STANDARDS [HIGHEST PRIORITY]
 
 ### Authentication Setup [PROJECT-SPECIFIC]
@@ -63,6 +72,11 @@ bin/rails db:seed              # Load seed data
 - Single admin user approach
 - Helper methods: `current_user`, `authenticate_admin!`, `admin_signed_in?`
 - Authentication controller generates User model with `email_address` field (not `email`)
+
+### Enum Preferences [PROJECT-SPECIFIC]
+- **ALWAYS** use string-based enums, never integer-based
+- Example: `enum :status, { draft: "draft", published: "published" }`
+- Database columns for enums should be `string` type, not `integer`
 
 ## QUALITY TOOLS [MANDATORY AFTER CHANGES]
 
@@ -72,6 +86,14 @@ bundle exec rubocop -A         # Auto-fix linting (ALWAYS RUN)
 bundle exec brakeman           # Security scan
 bin/rails test                 # Ensure all tests pass
 ```
+
+### Test Coverage [CRITICAL REQUIREMENT]
+- **ALWAYS** check test coverage when running tests
+- Target: 90% minimum coverage required
+- If coverage is below 90%, investigate and add missing tests
+- Focus on testing the actual functionality being implemented
+- Use SimpleCov filters to exclude untested base files when appropriate
+- Never ignore low coverage - either add tests or configure filters properly
 
 ## DOCUMENTATION GUIDELINES
 

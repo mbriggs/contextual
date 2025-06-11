@@ -1,0 +1,11 @@
+one:
+  title: "First Blog Post"
+  content: "This is the content of the first blog post."
+  status: "published"
+  published_at: <%= 1.day.ago %>
+
+two:
+  title: "Second Blog Post"
+  content: "This is the content of the second blog post."
+  status: "draft"
+  published_at:
