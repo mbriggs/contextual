@@ -1,51 +1,74 @@
-# CLAUDE.md
+# CONTEXTUAL BLOG: AI ASSISTANT GUIDELINES
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## RUBY PRINCIPLES [HIGHEST PRIORITY]
 
-## Application Overview
+- ❌ DON'T: Insert `# frozen_string_literal: true` in Ruby files  
+- ❌ DON'T: Use `require` statements in app/ files (use Rails autoloading)
 
-This is a Rails 8.0 application called "Contextual" using:
-- PostgreSQL database
-- Tailwind CSS for styling
-- Hotwire (Turbo + Stimulus) for interactivity
-- Solid Cache, Solid Queue, and Solid Cable for caching, background jobs, and WebSockets
-- Propshaft for asset pipeline
+## APPLICATION OVERVIEW [CRITICAL]
 
-## Development Commands
+### Tech Stack [ALWAYS FOLLOW]
+- Rails 8.0, Ruby 3.3+, PostgreSQL
+- Jobs: Solid Queue (not Sidekiq)
+- Caching: Solid Cache (not Redis)  
+- Cable: Solid Cable (not Redis)
+- Auth: Rails authentication generator (not Devise)
+- Frontend: ERB, Turbo, Stimulus, Tailwind CSS
+- Assets: Propshaft (not Sprockets)
+- Rich Text: ActionText with Active Storage
 
-### Setup
-- `bundle install` - Install Ruby dependencies
-- `bin/rails db:create` - Create development and test databases
-- `bin/rails db:migrate` - Run database migrations
+## DEVELOPMENT COMMANDS [ALWAYS USE THESE]
 
-### Running the Application
-- `bin/dev` - Start development server with Foreman (Rails server + Tailwind watch)
-- `bin/rails server` - Start Rails server only
-- `bin/rails tailwindcss:watch` - Watch and rebuild Tailwind CSS
+### Setup Commands
+```bash
+bundle install                  # Install Ruby dependencies
+bin/rails db:create            # Create development and test databases  
+bin/rails db:migrate           # Run database migrations
+```
 
-### Testing
-- `bin/rails test` - Run all tests except system tests
-- `bin/rails test:system` - Run system tests with Capybara/Selenium
-- `bin/rails test:db` - Reset database and run tests
+### Running Application
+```bash
+bin/dev                         # Start development server (Rails + Tailwind watch)
+bin/rails server               # Start Rails server only
+bin/rails tailwindcss:watch    # Watch and rebuild Tailwind CSS
+```
 
-### Code Quality
-- `bundle exec rubocop` - Run Ruby linting with Rails Omakase style guide
-- `bundle exec rubocop -A` - Auto-fix linting issues
-- `bundle exec brakeman` - Run security vulnerability analysis
-- `bundle exec rails_best_practices .` - Run Rails-specific quality checks
-- `bin/rails test` - Run tests with SimpleCov coverage reporting (90% minimum)
+### Testing Commands
+```bash
+bin/rails test                 # Run all tests except system tests
+bin/rails test:system          # Run system tests with Capybara/Selenium
+bin/rails test test/models/    # Run model tests only
+bin/rails test test/controllers/ # Run controller tests only
+```
 
-## Architecture Notes
+### Code Quality [MANDATORY AFTER ALL CHANGES]
+```bash
+bundle exec rubocop -A         # Auto-fix linting issues (ALWAYS RUN)
+bundle exec brakeman           # Security vulnerability analysis
+bin/rails test                 # Ensure all tests pass (90% coverage required)
+```
 
-- Uses Rails 8.0 modern stack with Solid* adapters instead of Redis
-- Tailwind is configured to watch for changes during development
-- Health check endpoint available at `/up`
-- PWA manifest templates are available but commented out in routes
-- Standard Rails MVC structure with Stimulus controllers for JavaScript
+### Database Operations
+```bash
+bin/rails db:migrate           # Run pending migrations
+bin/rails db:rollback          # Rollback last migration
+bin/rails db:reset             # Drop, create, and migrate database
+bin/rails db:seed              # Load seed data
+```
 
-## File Structure
+## PROJECT-SPECIFIC STANDARDS [HIGHEST PRIORITY]
 
-- `app/javascript/controllers/` - Stimulus controllers
-- `app/assets/tailwind/application.css` - Tailwind entry point
-- `config/deploy.yml` - Kamal deployment configuration
-- `Procfile.dev` - Development process definitions
+### Authentication Setup [PROJECT-SPECIFIC]
+- Uses Rails 8 authentication generator (not Devise)
+- Single admin user approach
+- Helper methods: `current_user`, `authenticate_admin!`, `admin_signed_in?`
+- Authentication controller generates User model with `email_address` field (not `email`)
+
+## QUALITY TOOLS [MANDATORY AFTER CHANGES]
+
+### Required Commands
+```bash
+bundle exec rubocop -A         # Auto-fix linting (ALWAYS RUN)
+bundle exec brakeman           # Security scan
+bin/rails test                 # Ensure all tests pass
+```
