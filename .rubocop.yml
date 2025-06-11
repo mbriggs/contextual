@@ -1,8 +1,84 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+inherit_from: "https://raw.githubusercontent.com/mbriggs/configs/main/dotfiles/rubocop-rails.yml"
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+Style/CaseEquality:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: true
+  EnforcedStyle: nested
+
+Minitest/AssertEmpty:
+  Enabled: false
+
+Minitest/AssertEqual:
+  Enabled: false
+
+Minitest/AssertIncludes:
+  Enabled: false
+
+Minitest/AssertInstanceOf:
+  Enabled: false
+
+Minitest/AssertKindOf:
+  Enabled: false
+
+Minitest/AssertMatch:
+  Enabled: false
+
+Minitest/AssertNil:
+  Enabled: false
+
+Minitest/AssertOperator:
+  Enabled: false
+
+Minitest/AssertPredicate:
+  Enabled: false
+
+Minitest/AssertRespondTo:
+  Enabled: false
+
+Minitest/AssertWithExpectedArgument:
+  Enabled: false
+
+Minitest/MultipleAssertions:
+  Enabled: false
+
+Minitest/RefuteEmpty:
+  Enabled: false
+
+Minitest/RefuteEqual:
+  Enabled: false
+
+Minitest/RefuteIncludes:
+  Enabled: false
+
+Minitest/RefuteInstanceOf:
+  Enabled: false
+
+Minitest/RefuteKindOf:
+  Enabled: false
+
+Minitest/RefuteMatch:
+  Enabled: false
+
+Minitest/RefuteNil:
+  Enabled: false
+
+Minitest/RefuteOperator:
+  Enabled: false
+
+Minitest/RefutePredicate:
+  Enabled: false
+
+Minitest/RefuteRespondTo:
+  Enabled: false
+
+Rails/RefuteMethods:
+  Enabled: false
+
+Rails/StrongParametersExpect:
+  Enabled: false
+
+Naming/PredicatePrefix:
+  Enabled: false
+

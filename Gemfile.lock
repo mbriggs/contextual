@@ -286,6 +286,13 @@ GEM
     rubocop-ast (1.45.1)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
+    rubocop-capybara (2.22.1)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
+    rubocop-minitest (0.38.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.38.0, < 2.0)
     rubocop-performance (1.25.0)
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
@@ -409,6 +416,11 @@ DEPENDENCIES
   rack-mini-profiler (~> 4.0)
   rails (~> 8.0.2)
   rails_best_practices (~> 1.23)
+  rubocop
+  rubocop-capybara
+  rubocop-minitest
+  rubocop-performance
+  rubocop-rails
   rubocop-rails-omakase
   selenium-webdriver
   simplecov (~> 0.22.0)
