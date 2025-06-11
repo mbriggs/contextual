@@ -69,13 +69,13 @@ class PostTest < ActiveSupport::TestCase
   test "comment method creates new comment for post" do
     post = posts(:one)
     post.update!(title: "Test", content: "Content")
+    user = users(:one)
 
-    comment = post.comment("Jane Doe", "jane@example.com", "Great post!")
+    comment = post.comment(user, "Great post!")
 
     assert comment.persisted?, "Comment should be saved"
     assert comment.post == post, "Comment should belong to post"
-    assert comment.author_name == "Jane Doe", "Author name should be set"
-    assert comment.author_email == "jane@example.com", "Author email should be set"
+    assert comment.user == user, "Comment should belong to user"
     assert comment.content == "Great post!", "Content should be set"
     refute comment.approved?, "Comment should not be approved by default"
   end

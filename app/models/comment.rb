@@ -1,8 +1,7 @@
 class Comment < ApplicationRecord
   belongs_to :post
+  belongs_to :user
 
-  validates :author_name, presence: true
-  validates :author_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :content, presence: true
 
   scope :approved, -> { where.not(approved_at: nil) }

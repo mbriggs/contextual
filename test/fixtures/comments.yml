@@ -1,13 +1,11 @@
 one:
   post: one
-  author_name: "John Doe"
-  author_email: "john@example.com"
+  user: one
   content: "Great post! Thanks for sharing."
   approved_at: <%= 1.hour.ago %>
 
 two:
   post: one
-  author_name: "Jane Smith"
-  author_email: "jane@example.com"
+  user: two
   content: "Interesting thoughts on this topic."
   approved_at:

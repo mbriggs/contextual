@@ -78,9 +78,8 @@
         "lines": [
           1,
           1,
+          1,
           null,
-          1,
-          1,
           1,
           null,
           2,
@@ -131,11 +130,10 @@
           null,
           null,
           null,
-          null,
           1,
           null,
           1,
-          18,
+          17,
           3,
           null,
           null,
@@ -275,6 +273,13 @@
           null
         ]
       },
+      "/Users/mbriggs/contextual/app/models/session.rb": {
+        "lines": [
+          1,
+          1,
+          null
+        ]
+      },
       "/Users/mbriggs/contextual/app/controllers/sessions_controller.rb": {
         "lines": [
           1,
@@ -300,13 +305,6 @@
           null
         ]
       },
-      "/Users/mbriggs/contextual/app/models/session.rb": {
-        "lines": [
-          1,
-          1,
-          null
-        ]
-      },
       "/Users/mbriggs/contextual/app/models/current.rb": {
         "lines": [
           1,
@@ -316,6 +314,6 @@
         ]
       }
     },
-    "timestamp": 1749674433
+    "timestamp": 1749675071
   }
 }

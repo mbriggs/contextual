@@ -12,10 +12,9 @@ class Post < ApplicationRecord
 
   before_save :set_published_at
 
-  def comment(author_name, author_email, content)
+  def comment(user, content)
     comments.create!(
-      author_name: author_name,
-      author_email: author_email,
+      user: user,
       content: content,
     )
   end

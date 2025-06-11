@@ -2,23 +2,15 @@ require "test_helper"
 
 class CommentTest < ActiveSupport::TestCase
   test "comment requires all required fields" do
-    assert_requires Comment.new, :author_name, :author_email, :content, :post
-  end
-
-  test "comment validates email format" do
-    comment = comments(:one)
-    post = posts(:one)
-    post.update!(title: "Test", content: "Content")
-    comment.update!(post: post, author_name: "Test", content: "Content")
-
-    assert_invalid_format comment, :author_email, "invalid-email", "valid@example.com"
+    assert_requires Comment.new, :content, :post, :user
   end
 
   test "comment defaults to not approved" do
     post = posts(:one)
     post.update!(title: "Test", content: "Content")
+    user = users(:one)
 
-    comment = post.comment("Test Author", "test@example.com", "Test content")
+    comment = post.comment(user, "Test content")
 
     refute comment.approved?, "Comment should default to not approved"
     assert comment.approved_at.nil?, "Approved at should be nil by default"
@@ -60,20 +52,23 @@ class CommentTest < ActiveSupport::TestCase
     assert result.last == old_comment, "Oldest comment should be last"
   end
 
-  test "comment belongs to post" do
+  test "comment belongs to post and user" do
     post = posts(:one)
     post.update!(title: "Test", content: "Content")
+    user = users(:one)
     comment = comments(:one)
-    comment.update!(post: post)
+    comment.update!(post: post, user: user)
 
     assert comment.post == post, "Comment should belong to assigned post"
+    assert comment.user == user, "Comment should belong to assigned user"
   end
 
   test "approve! sets approved_at timestamp" do
     post = posts(:one)
     post.update!(title: "Test", content: "Content")
+    user = users(:one)
 
-    comment = post.comment("Test Author", "test@example.com", "Test content")
+    comment = post.comment(user, "Test content")
     comment.approve!
 
     assert comment.approved?, "Comment should be approved after approve!"
