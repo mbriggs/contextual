@@ -19,11 +19,30 @@ class Post < ApplicationRecord
     )
   end
 
+  before_save :set_excerpt_if_blank
+
+  def auto_excerpt(limit: 160)
+    return "" if content.blank?
+
+    # Convert rich text to plain text, then create excerpt
+    plain_text = content.to_plain_text.strip.gsub(/\s+/, " ")
+    return plain_text if plain_text.length <= limit
+
+    truncated = plain_text.truncate(limit, separator: " ", omission: "")
+    "#{truncated}..."
+  end
+
   private
 
   def set_published_at
     if status_changed? && published?
       self.published_at ||= Time.current
+    end
+  end
+
+  def set_excerpt_if_blank
+    if excerpt.blank? && content.present?
+      self.excerpt = auto_excerpt
     end
   end
 end

@@ -5,6 +5,19 @@ require "minitest/mock"
 require "simplecov"
 
 SimpleCov.start "rails" do
+  # Use unique command name for each parallel process
+  command_name "Test Process #{ENV['PARALLEL_TEST_GROUPS'] || Process.pid}"
+
+  # Merge timeout for parallel processes
+  merge_timeout 3600
+
+  # Track files
+  track_files "{app,lib}/**/*.rb"
+
+  # Add filter for test files
+  add_filter "/test/"
+  add_filter "/spec/"
+
   minimum_coverage 90
 
   # TODO: Remove these as they are implemented
@@ -84,6 +97,14 @@ module ActiveSupport
       Array(excluded_records).each do |record|
         refute result.include?(record), "Scope should exclude #{record.class}##{record.id}"
       end
+    end
+
+    # Authentication helper for integration tests
+    def sign_in_as(user)
+      post session_path, params: {
+        email_address: user.email_address,
+        password: "password",
+      }
     end
   end
 end

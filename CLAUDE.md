@@ -48,6 +48,8 @@ bundle exec brakeman           # Security vulnerability analysis
 bin/rails test                 # Ensure all tests pass (90% coverage required)
 ```
 
+**NOTE**: SimpleCov is configured to work properly with Rails' parallel testing. The coverage report script automatically detects and merges results from multiple parallel processes.
+
 ### Database Operations
 ```bash
 bin/rails db:migrate           # Run pending migrations
@@ -84,7 +86,7 @@ bin/rails runner "p Post.first.attributes"            # Inspect first post
 ```bash
 bundle exec rubocop -A         # Auto-fix linting (ALWAYS RUN)
 bundle exec brakeman           # Security scan
-bin/rails test                 # Ensure all tests pass
+bin/rails test                 # Ensure all tests pass with accurate coverage
 ```
 
 ### Test Coverage [CRITICAL REQUIREMENT]
@@ -94,6 +96,16 @@ bin/rails test                 # Ensure all tests pass
 - Focus on testing the actual functionality being implemented
 - Use SimpleCov filters to exclude untested base files when appropriate
 - Never ignore low coverage - either add tests or configure filters properly
+
+### Coverage Analysis Tool
+```bash
+bin/coverage-report              # Detailed coverage analysis script
+```
+- Shows overall coverage percentage and breakdown by file
+- Lists files under 90% coverage with specific uncovered line numbers
+- Provides actionable tips for improving coverage
+- Run after `bin/rails test` to analyze current coverage gaps
+- Automatically detects and merges parallel test results when needed
 
 ## DOCUMENTATION GUIDELINES
 

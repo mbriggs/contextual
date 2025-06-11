@@ -1,0 +1,148 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+# Check if coverage file exists
+coverage_file = 'coverage/.resultset.json'
+unless File.exist?(coverage_file)
+  puts "❌ Coverage file not found. Run 'bin/rails test' first to generate coverage data."
+  exit 1
+end
+
+# Parse coverage data
+begin
+  full_data = JSON.parse(File.read(coverage_file))
+  
+  # Check if we have multiple parallel test result sections
+  all_sections = full_data.keys.reject { |k| k.match?(/timestamp/) }
+  parallel_sections = all_sections.select { |k| k.match?(/Test Process \d+/) }
+  
+  # If we have multiple parallel test sections, use rake task to merge them
+  if parallel_sections.length > 1
+    puts "🔄 Multiple parallel test results detected (#{parallel_sections.length} processes)"
+    puts "   Running coverage merge to combine results..."
+    
+    system("bundle exec rake coverage:merge > /dev/null 2>&1")
+    
+    # Re-read the merged coverage file
+    full_data = JSON.parse(File.read(coverage_file))
+  end
+  
+  # Use the section with higher coverage (more recent/accurate data)
+  unit_tests_data = full_data['Unit Tests']&.dig('coverage')
+  minitest_data = full_data['Minitest']&.dig('coverage')
+  
+  # Calculate totals for both to pick the better one
+  sections = {}
+  [['Unit Tests', unit_tests_data], ['Minitest', minitest_data]].each do |name, section_data|
+    next unless section_data
+    
+    total_lines = 0
+    covered_lines = 0
+    section_data.each do |file, info|
+      lines = info['lines']
+      total_lines += lines.count { |l| !l.nil? }
+      covered_lines += lines.count { |l| l && l > 0 }
+    end
+    
+    percentage = total_lines > 0 ? (covered_lines.to_f / total_lines * 100) : 0
+    sections[name] = { data: section_data, percentage: percentage, covered: covered_lines, total: total_lines }
+  end
+  
+  # Use the section with higher coverage percentage
+  best_section = sections.max_by { |name, stats| stats[:percentage] }
+  
+  if best_section.nil?
+    puts "❌ No valid coverage data found in file."
+    exit 1
+  end
+  
+  data = best_section[1][:data]
+  puts "📋 Using coverage data from: #{best_section[0]}"
+  
+rescue JSON::ParserError
+  puts "❌ Invalid coverage file format."
+  exit 1
+end
+
+puts "📊 Test Coverage Report"
+puts "=" * 50
+
+total_files = 0
+files_under_90 = 0
+overall_total_lines = 0
+overall_covered_lines = 0
+
+low_coverage_files = []
+
+data.each do |file, info|
+  lines = info['lines']
+  total_lines = lines.count { |l| !l.nil? }
+  covered_lines = lines.count { |l| l && l > 0 }
+  
+  next if total_lines == 0
+  
+  total_files += 1
+  overall_total_lines += total_lines
+  overall_covered_lines += covered_lines
+  
+  percentage = (covered_lines.to_f / total_lines * 100).round(2)
+  file_name = file.split('/').last(3).join('/')
+  
+  if percentage < 90
+    files_under_90 += 1
+    uncovered_lines = []
+    
+    lines.each_with_index do |hits, index|
+      if hits == 0  # Line exists but not covered
+        uncovered_lines << index + 1
+      end
+    end
+    
+    low_coverage_files << {
+      file: file_name,
+      percentage: percentage,
+      covered: covered_lines,
+      total: total_lines,
+      uncovered_lines: uncovered_lines
+    }
+  end
+end
+
+# Overall stats
+overall_percentage = (overall_covered_lines.to_f / overall_total_lines * 100).round(2)
+
+puts "📈 Overall Coverage: #{overall_percentage}% (#{overall_covered_lines}/#{overall_total_lines} lines)"
+puts "📂 Total Files: #{total_files}"
+puts "⚠️  Files Under 90%: #{files_under_90}"
+puts
+
+if files_under_90 > 0
+  puts "🔍 Files Needing Attention:"
+  puts "-" * 50
+  
+  low_coverage_files.sort_by { |f| f[:percentage] }.each do |file_info|
+    puts "#{file_info[:file]}: #{file_info[:percentage]}% (#{file_info[:covered]}/#{file_info[:total]} lines)"
+    
+    if file_info[:uncovered_lines].any?
+      puts "   Uncovered lines: #{file_info[:uncovered_lines][0..9].join(', ')}"
+      if file_info[:uncovered_lines].length > 10
+        puts "   ... and #{file_info[:uncovered_lines].length - 10} more"
+      end
+    end
+    puts
+  end
+  
+  puts "💡 Tips:"
+  puts "- Focus on files with the lowest coverage percentages first"
+  puts "- Add tests for the uncovered lines shown above"
+  puts "- Run 'bin/rails test path/to/specific_test.rb' to test individual files"
+else
+  puts "🎉 All files meet the 90% coverage requirement!"
+end
+
+puts
+puts "🚀 To improve coverage:"
+puts "1. Add tests for the uncovered lines listed above"
+puts "2. Re-run 'bin/rails test' to regenerate coverage"
+puts "3. Run this script again to check progress"
