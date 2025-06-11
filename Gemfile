@@ -56,3 +56,5 @@ group :test do
 end
 
 gem "image_processing", "~> 1.14"
+
+gem "bcrypt", "~> 3.1"
