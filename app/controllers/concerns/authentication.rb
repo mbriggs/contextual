@@ -27,11 +27,15 @@ module Authentication
   end
 
   def admin_signed_in?
-    authenticated?
+    authenticated? && current_user&.admin?
   end
 
   def authenticate_admin!
     require_authentication
+
+    unless current_user&.admin?
+      redirect_to root_path, alert: "Access denied. Admin privileges required."
+    end
   end
 
   def require_authentication

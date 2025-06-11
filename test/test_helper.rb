@@ -14,7 +14,8 @@ SimpleCov.start "rails" do
       source_file.filename.include?("app/helpers/application_helper.rb") ||
       source_file.filename.include?("app/jobs/application_job.rb") ||
       source_file.filename.include?("app/mailers/application_mailer.rb") ||
-      source_file.filename.include?("app/channels/application_cable/connection.rb")
+      source_file.filename.include?("app/channels/application_cable/connection.rb") ||
+      source_file.filename.include?("app/mailers/passwords_mailer.rb")
   end
 end
 

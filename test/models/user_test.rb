@@ -60,10 +60,41 @@ class UserTest < ActiveSupport::TestCase
     assert found_user.nil?, "Should return nil with incorrect email"
   end
 
-  test "user has many sessions" do
+  test "user has many sessions and comments" do
     user = users(:one)
 
     assert user.respond_to?(:sessions), "User should have sessions association"
     assert user.sessions.is_a?(ActiveRecord::Associations::CollectionProxy), "Sessions should be a collection"
+    assert user.respond_to?(:comments), "User should have comments association"
+    assert user.comments.is_a?(ActiveRecord::Associations::CollectionProxy), "Comments should be a collection"
+  end
+
+  test "user role enum works correctly" do
+    admin_user = users(:one)
+    commenter_user = users(:two)
+
+    assert admin_user.admin?, "Admin user should be admin"
+    refute admin_user.commenter?, "Admin user should not be commenter"
+
+    assert commenter_user.commenter?, "Commenter user should be commenter"
+    refute commenter_user.admin?, "Commenter user should not be admin"
+  end
+
+  test "user role scopes work correctly" do
+    admin_user = users(:one)
+    commenter_user = users(:two)
+
+    assert_scope_filters User.admins, admin_user, commenter_user
+    assert_scope_filters User.commenters, commenter_user, admin_user
+  end
+
+  test "user defaults to commenter role" do
+    user = User.new(
+      email_address: "newuser@example.com",
+      password: "password123",
+    )
+
+    assert user.commenter?, "New user should default to commenter role"
+    refute user.admin?, "New user should not be admin by default"
   end
 end

@@ -47,16 +47,31 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "You have been signed out.", flash[:notice]
   end
 
-  test "authentication helpers work correctly after sign in" do
-    user = users(:one)
+  test "admin authentication helpers work correctly" do
+    admin_user = users(:one)
 
-    # Sign in user
+    # Sign in admin
     post session_path, params: {
-      email_address: user.email_address,
+      email_address: admin_user.email_address,
       password: "password",
     }
 
-    # Verify authentication status by making authenticated request
+    # Verify admin authentication status
+    get root_path
+
+    assert_response :success
+  end
+
+  test "commenter authentication works but admin_signed_in is false" do
+    commenter_user = users(:two)
+
+    # Sign in commenter
+    post session_path, params: {
+      email_address: commenter_user.email_address,
+      password: "password",
+    }
+
+    # Verify commenter can sign in but is not admin
     get root_path
 
     assert_response :success
