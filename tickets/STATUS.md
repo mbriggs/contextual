@@ -3,8 +3,8 @@
 ## Phase 0: Infrastructure (Setup)
 - [x] 00 - Code Quality Setup (RuboCop, Brakeman, SimpleCov)
 - [x] 01 - CLAUDE.md Documentation Enhancement
-- [ ] 02 - Testing Foundation
-- [ ] 03 - Development Workflow Setup
+- [x] 02 - Testing Foundation
+- [x] 03 - Development Workflow Setup
 
 ## Phase 1: Foundation (P0 - Must Have)
 - [ ] 01 - Database Schema & Core Models

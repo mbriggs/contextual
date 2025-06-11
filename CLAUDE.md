@@ -72,3 +72,49 @@ bundle exec rubocop -A         # Auto-fix linting (ALWAYS RUN)
 bundle exec brakeman           # Security scan
 bin/rails test                 # Ensure all tests pass
 ```
+
+## DOCUMENTATION GUIDELINES
+
+- the docs folder is for human audience documentation
+- CLAUDE.md files in folders are for LLM documentation for the files in that folder
+
+## PROJECT MANAGEMENT [TICKETS SYSTEM]
+
+### Tickets Directory Structure
+The `tickets/` directory contains the complete project roadmap and development plan:
+
+- **ARCHITECTURE.md** - High-level system design and technical decisions
+- **REQUIREMENTS.md** - Detailed feature requirements and acceptance criteria  
+- **STATUS.md** - Current ticket completion status (update as work progresses)
+- **README.md** - Overview of the ticketing system
+
+### Phase Organization
+Development is organized into phases with numbered tickets:
+
+- **Phase 0 (Infrastructure)** - `phase0-infrastructure/` - Setup and tooling
+- **Phase 1 (Foundation)** - `phase1-foundation/` - Core blog functionality
+- **Phase 2 (Enhancement)** - `phase2-enhancement/` - Advanced features
+- **Phase 3 (Polish)** - `phase3-polish/` - Nice-to-have features
+
+### Ticket Format [ALWAYS FOLLOW]
+Each ticket contains:
+- **Size**: S/M/L complexity estimate
+- **Dependencies**: Required prerequisite tickets
+- **Context**: Links to requirements and architecture decisions
+- **Deliverables**: Checkbox list of concrete work items
+- **Success Criteria**: Definition of done
+- **Technical Notes**: Implementation guidance
+
+### Working with Tickets [CRITICAL WORKFLOW]
+1. **Read STATUS.md first** - Check current progress and next ticket
+2. **Read the specific ticket** - Understand deliverables and context
+3. **Update STATUS.md** - Mark ticket as in progress [~] when starting
+4. **Complete all deliverables** - Check off items as you finish them
+5. **Mark completed [x]** - Update STATUS.md when ticket is done
+6. **Reference ticket in commits** - Use ticket number in commit messages
+
+### Ticket Dependencies [MUST RESPECT]
+- Never work on a ticket until its dependencies are completed
+- Phase 0 must be completed before Phase 1
+- Within phases, respect individual ticket dependencies
+- Update STATUS.md to reflect actual completion status
