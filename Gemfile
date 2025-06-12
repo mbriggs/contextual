@@ -33,7 +33,6 @@ gem "tzinfo-data", platforms: [:windows, :jruby]
 group :development, :test do
   gem "brakeman", require: false
   gem "debug", platforms: [:mri, :windows], require: "debug/prelude"
-  gem "rails_best_practices", "~> 1.23"
 end
 
 group :development do
