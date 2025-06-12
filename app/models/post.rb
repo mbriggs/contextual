@@ -20,7 +20,6 @@ class Post < ApplicationRecord
     )
   end
 
-
   def auto_excerpt(limit: 160)
     return "" if content.blank?
 
