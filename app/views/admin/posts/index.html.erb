@@ -17,16 +17,16 @@
                 <%= post.status.humanize %>
               </span>
               <%= link_to "Edit", edit_admin_post_path(post), class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
-              <%= link_to "Delete", admin_post_path(post), method: :delete, 
+              <%= link_to "Delete", admin_post_path(post), method: :delete,
                   data: { confirm: "Are you sure?" },
                   class: "text-red-600 hover:text-red-800 text-sm font-medium" %>
             </div>
           </div>
-          
+
           <% if post.excerpt.present? %>
             <p class="text-gray-600 mb-4"><%= post.excerpt %></p>
           <% end %>
-          
+
           <div class="text-sm text-gray-500">
             Published <%= time_ago_in_words(post.created_at) %> ago
           </div>

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resource :session
-  resources :passwords, param: :token
+  resource :session, only: [:new, :create, :destroy]
+  resources :passwords, param: :token, except: [:show, :destroy, :index]
   resources :posts, only: [:index, :show]
 
   namespace :admin do
