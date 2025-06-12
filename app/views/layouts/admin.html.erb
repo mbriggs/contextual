@@ -30,24 +30,20 @@
             </div>
             <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
               <%= link_to "Posts", admin_posts_path,
-                  class: "#{current_page?(admin_posts_path) ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" %>
+                class: "#{current_page?(admin_posts_path) ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" %>
               <%= link_to "New Post", new_admin_post_path,
-                  class: "#{current_page?(new_admin_post_path) ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" %>
+                class: "#{current_page?(new_admin_post_path) ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" %>
             </div>
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:items-center">
-            <% if admin_signed_in? %>
-              <div class="ml-3 relative">
-                <div class="flex items-center space-x-4">
+            <div class="ml-3 relative">
+              <div class="flex items-center space-x-4">
                   <span class="text-sm text-gray-700">
                     <%= current_user.email_address %>
                   </span>
-                  <%= button_link "Sign out", session_path, variant: :secondary, method: :delete %>
-                </div>
+                <%= button_link "Sign out", session_path, variant: :secondary, method: :delete %>
               </div>
-            <% else %>
-              <%= button_link "Sign in", new_session_path %>
-            <% end %>
+            </div>
           </div>
 
           <!-- Mobile menu button -->
@@ -55,7 +51,7 @@
             <button type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-controls="mobile-menu" aria-expanded="false" data-action="click->menu#toggle">
               <span class="sr-only">Open main menu</span>
               <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
               </svg>
             </button>
           </div>
@@ -66,9 +62,9 @@
       <div class="sm:hidden hidden" id="mobile-menu" data-menu-target="menu">
         <div class="pt-2 pb-3 space-y-1">
           <%= link_to "Posts", admin_posts_path,
-              class: "#{current_page?(admin_posts_path) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'} block pl-3 pr-4 py-2 border-l-4 text-base font-medium" %>
+            class: "#{current_page?(admin_posts_path) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'} block pl-3 pr-4 py-2 border-l-4 text-base font-medium" %>
           <%= link_to "New Post", new_admin_post_path,
-              class: "#{current_page?(new_admin_post_path) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'} block pl-3 pr-4 py-2 border-l-4 text-base font-medium" %>
+            class: "#{current_page?(new_admin_post_path) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'} block pl-3 pr-4 py-2 border-l-4 text-base font-medium" %>
         </div>
         <% if admin_signed_in? %>
           <div class="pt-4 pb-3 border-t border-gray-200">
@@ -85,7 +81,7 @@
           <div class="pt-4 pb-3 border-t border-gray-200">
             <div class="space-y-1">
               <%= link_to "Sign in", new_session_path,
-                  class: "block px-4 py-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:bg-gray-100" %>
+                class: "block px-4 py-2 text-base font-medium text-blue-600 hover:text-blue-800 hover:bg-gray-100" %>
             </div>
           </div>
         <% end %>
