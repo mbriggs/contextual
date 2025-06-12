@@ -17,6 +17,15 @@
 - ✅ DO: Separate variable assignment from conditional logic
 - ❌ DON'T: Use variable assignment inside conditionals
 
+### Logging Guidelines [ALWAYS FOLLOW]
+- ✅ DO: Use the `Logging` mixin where available (see `lib/logging.rb`)
+- ✅ DO: **Assume the `logger` object is available** where this mixin is included
+- ✅ DO: Use standard logger syntax: `logger.level(message)` (e.g., `logger.info("Processing post")`)
+- ❌ DON'T: Use block syntax for logging (`logger.level { message }`)
+- ❌ DON'T: Manually prefix log messages (e.g., with class names like `[ClassName]`)
+- ✅ DO: Add logging judiciously where it provides significant insight into the flow or potential issues
+- ❌ DON'T: Add excessive or redundant logging
+
 ```ruby
 # CORRECT - Inline private methods
 class PostsController < ApplicationController
@@ -86,6 +95,33 @@ end
 # INCORRECT - Assignment in conditional
 if (user = User.find_by(email: params[:email]))
   process_user(user)
+end
+
+# CORRECT - Logging with blog domain examples
+class PostProcessor
+  include Logging
+
+  def publish_post(post)
+    logger.info("Publishing post #{post.id}")
+    post.update!(status: "published", published_at: Time.current)
+    logger.info("Post #{post.id} published successfully")
+  end
+
+  def process_comments(post)
+    logger.info("Processing #{post.comments.pending.count} pending comments for post #{post.id}")
+    post.comments.pending.each(&:approve!)
+    logger.info("Comment processing complete for post #{post.id}")
+  end
+end
+
+# INCORRECT - Don't use block syntax or manual prefixes
+class PostProcessor
+  include Logging
+
+  def publish_post(post)
+    logger.info { "[PostProcessor] Starting to publish post #{post.id}" } # Don't use block syntax or class prefix
+    post.update!(status: "published", published_at: Time.current)
+  end
 end
 ```
 

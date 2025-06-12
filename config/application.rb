@@ -8,6 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Contextual
   class Application < Rails::Application
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
@@ -15,6 +16,8 @@ module Contextual
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: ["assets", "tasks"])
+
+    config.x.logging = "_all" # lib/logging.rb
 
     # Configuration for the application, engines, and railties goes here.
     #
