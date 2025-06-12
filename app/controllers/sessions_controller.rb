@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
       logger.debug("No current session to terminate")
     end
 
-    redirect_to new_session_path, notice: "You have been signed out."
+    redirect_to root_path, notice: "You have been signed out."
   end
 
   # Pre-populate login form with credentials from .dev.json in development mode.
