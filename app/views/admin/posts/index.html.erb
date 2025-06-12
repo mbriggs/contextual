@@ -1,0 +1,43 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Admin - Blog Posts</h1>
+    <%= link_to "New Post", new_admin_post_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors" %>
+  </div>
+
+  <% if @posts.any? %>
+    <div class="space-y-8">
+      <% @posts.each do |post| %>
+        <article class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="flex justify-between items-start mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">
+              <%= link_to post.title, admin_post_path(post), class: "hover:text-blue-600 transition-colors" %>
+            </h2>
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-1 text-xs font-medium rounded-full <%= post.published? ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                <%= post.status.humanize %>
+              </span>
+              <%= link_to "Edit", edit_admin_post_path(post), class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+              <%= link_to "Delete", admin_post_path(post), method: :delete, 
+                  data: { confirm: "Are you sure?" },
+                  class: "text-red-600 hover:text-red-800 text-sm font-medium" %>
+            </div>
+          </div>
+          
+          <% if post.excerpt.present? %>
+            <p class="text-gray-600 mb-4"><%= post.excerpt %></p>
+          <% end %>
+          
+          <div class="text-sm text-gray-500">
+            Published <%= time_ago_in_words(post.created_at) %> ago
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-16">
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
+      <p class="text-gray-500 mb-6">Get started by creating your first blog post.</p>
+      <%= link_to "Create First Post", new_admin_post_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors" %>
+    </div>
+  <% end %>
+</div>

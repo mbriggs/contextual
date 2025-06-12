@@ -140,6 +140,53 @@ After setup is complete:
 3. Check [docs/TESTING.md](TESTING.md) for testing guidelines
 4. Review [CLAUDE.md](../CLAUDE.md) for AI assistant guidance
 
+## Admin User Setup
+
+After installation, you'll need to create an admin user to access the application:
+
+### Quick Admin Setup
+
+```bash
+# Create admin user with default credentials from .dev.json
+bin/create-admin
+
+# Or specify credentials directly
+bin/create-admin admin@example.com mypassword
+
+# For non-interactive setup (CI/automation)
+bin/create-admin --force --quiet
+```
+
+### Development Configuration
+
+The setup script will create a `.dev.json` file with your admin credentials:
+
+```json
+{
+  "user": {
+    "email": "your-email@example.com",
+    "password": "your-password"
+  }
+}
+```
+
+This file is automatically ignored by git for security. You can modify it to change your default admin credentials.
+
+### Manual Admin User Creation
+
+If you need to create an admin user manually:
+
+```bash
+# Interactive with confirmation prompts
+bin/create-admin --email admin@example.com --password secret123
+
+# Using positional arguments
+bin/create-admin admin@example.com secret123
+
+# Get help and see all options
+bin/create-admin --help
+```
+
 ## Environment Variables
 
 No environment variables are required for development. The application uses Rails defaults and database configuration from `config/database.yml`.

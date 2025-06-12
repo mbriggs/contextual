@@ -1,0 +1,141 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/environment"
+require "json"
+require "optparse"
+
+DEV_CONFIG_FILE = Rails.root.join(".dev.json")
+
+# Parse command line options
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: bin/create-admin [OPTIONS] [EMAIL] [PASSWORD]"
+  opts.separator ""
+  opts.separator "Create an admin user for the application. Reads default values from .dev.json if present."
+  opts.separator ""
+  opts.separator "Options:"
+  
+  opts.on("-e", "--email EMAIL", "Admin user email address") do |email|
+    options[:email] = email
+  end
+  
+  opts.on("-p", "--password PASSWORD", "Admin user password") do |password|
+    options[:password] = password
+  end
+  
+  opts.on("-f", "--force", "Skip confirmation prompts") do
+    options[:force] = true
+  end
+  
+  opts.on("-q", "--quiet", "Suppress output") do
+    options[:quiet] = true
+  end
+  
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+  
+  opts.separator ""
+  opts.separator "Examples:"
+  opts.separator "  bin/create-admin                                    # Use .dev.json values"
+  opts.separator "  bin/create-admin admin@example.com secret123       # Positional arguments"
+  opts.separator "  bin/create-admin -e admin@example.com -p secret123 # Named options"
+  opts.separator "  bin/create-admin --force --quiet                   # Non-interactive"
+end.parse!
+
+# Handle positional arguments if no named options provided
+if ARGV.length >= 1 && options[:email].nil?
+  options[:email] = ARGV[0]
+end
+
+if ARGV.length >= 2 && options[:password].nil?
+  options[:password] = ARGV[1]
+end
+
+# Load dev config
+config_email = nil
+config_password = nil
+
+if File.exist?(DEV_CONFIG_FILE)
+  begin
+    config = JSON.parse(File.read(DEV_CONFIG_FILE))
+    config_email = config.dig("user", "email")
+    config_password = config.dig("user", "password")
+    puts "📄 Found .dev.json configuration" unless options[:quiet]
+  rescue JSON::ParserError => e
+    puts "❌ Error parsing .dev.json: #{e.message}"
+    exit 1
+  end
+else
+  puts "⚠️  No .dev.json file found. Create one from .dev.json.template or provide email/password as options." unless options[:quiet]
+end
+
+# Determine final email and password
+email = options[:email] || config_email
+password = options[:password] || config_password
+
+# Validate required fields
+if email.nil? || password.nil?
+  puts "❌ Email and password are required. Provide them as options or in .dev.json"
+  puts "Usage: bin/create-admin --email EMAIL --password PASSWORD"
+  puts "   or: bin/create-admin EMAIL PASSWORD"
+  exit 1
+end
+
+# Display user info
+unless options[:quiet]
+  puts "\n🔧 Admin User Creation"
+  puts "=" * 40
+  puts "Email: #{email}"
+  puts "Password: #{'*' * password.length}"
+end
+
+# Create or update user
+if User.exists?(email_address: email)
+  unless options[:force] || options[:quiet]
+    puts "\n⚠️  User with email '#{email}' already exists!"
+    print "Do you want to update their password? (y/N): "
+    response = STDIN.gets.chomp.downcase
+    
+    unless response == 'y' || response == 'yes'
+      puts "Operation cancelled."
+      exit 0
+    end
+  end
+  
+  user = User.find_by(email_address: email)
+  user.update_columns(
+    password_digest: User.new(password: password, password_confirmation: password).password_digest,
+    role: "admin"
+  )
+  puts "✅ Admin user password updated and role set to admin!" unless options[:quiet]
+else
+  unless options[:force] || options[:quiet]
+    print "\nCreate admin user with these credentials? (y/N): "
+    response = STDIN.gets.chomp.downcase
+    
+    unless response == 'y' || response == 'yes'
+      puts "Operation cancelled."
+      exit 0
+    end
+  end
+  
+  # Create user without validations to avoid any validation issues
+  user = User.new(
+    email_address: email,
+    password: password,
+    password_confirmation: password,
+    role: "admin"
+  )
+  user.save!(validate: false)
+  puts "✅ Admin user created successfully with admin role!" unless options[:quiet]
+end
+
+# Display login info
+unless options[:quiet]
+  puts "\n📝 Login Details:"
+  puts "Email: #{email}"
+  puts "Password: #{password}"
+  puts "\n🌐 You can now sign in at: http://localhost:3000/session/new"
+end

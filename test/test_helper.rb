@@ -38,7 +38,10 @@ Rails.root.glob("test/support/**/*.rb").each { |f| require f }
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers
-    parallelize(workers: :number_of_processors)
+    # Use single worker in test environment when running locally for accurate coverage
+    # Use parallel workers in CI (where PARALLEL_WORKERS env var can be set)
+    workers = ENV.fetch("PARALLEL_WORKERS", 1).to_i
+    parallelize(workers: workers)
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all

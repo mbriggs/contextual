@@ -48,7 +48,7 @@ bundle exec brakeman           # Security vulnerability analysis
 bin/rails test                 # Ensure all tests pass (90% coverage required)
 ```
 
-**NOTE**: SimpleCov is configured to work properly with Rails' parallel testing. The coverage report script automatically detects and merges results from multiple parallel processes.
+**NOTE**: Tests run in single worker mode by default for accurate coverage reporting. For CI environments, set `PARALLEL_WORKERS=<number>` to enable parallel testing. SimpleCov automatically merges results from parallel processes when needed.
 
 ### Database Operations
 ```bash
@@ -89,6 +89,15 @@ bundle exec brakeman           # Security scan
 bin/rails test                 # Ensure all tests pass with accurate coverage
 ```
 
+### PRE-COMMIT REQUIREMENTS [CRITICAL]
+- 🚫 **NEVER** commit if RuboCop has unresolved offenses
+- 🚫 **NEVER** commit if tests are failing
+- 🚫 **NEVER** commit if test coverage is below 90%
+- ✅ **ALWAYS** run `bundle exec rubocop -A` before every commit
+- ✅ **ALWAYS** run `bin/rails test` before every commit
+- ✅ **ALWAYS** fix all issues found before committing
+- ⚠️ If RuboCop auto-fix changes files, stage and include those changes in commit
+
 ### Test Coverage [CRITICAL REQUIREMENT]
 - **ALWAYS** check test coverage when running tests
 - Target: 90% minimum coverage required
@@ -111,6 +120,16 @@ bin/coverage-report              # Detailed coverage analysis script
 
 - the docs folder is for human audience documentation
 - CLAUDE.md files in folders are for LLM documentation for the files in that folder
+
+### CLAUDE.md File Writing [MANDATORY]
+- ✅ DO: Write CLAUDE.md files targeted at LLMs, not humans
+- ✅ DO: Use `[HIGHEST PRIORITY]`, `[MANDATORY]`, `[CRITICAL]` tags for importance
+- ✅ DO: Include only actionable instructions with ✅ DO/❌ DON'T format
+- ✅ DO: Use code examples showing CORRECT vs INCORRECT patterns
+- ✅ DO: Focus on project-specific conventions and common mistakes
+- ✅ DO: Use emojis (✅❌📝🔧⚠️💡🚫) to make scanning easier for LLMs
+- ❌ DON'T: Write explanatory text or background information
+- ❌ DON'T: Include general programming advice that applies everywhere
 
 ## PROJECT MANAGEMENT [TICKETS SYSTEM]
 

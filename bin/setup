@@ -7,6 +7,40 @@ def system!(*args)
   system(*args, exception: true)
 end
 
+def setup_dev_config
+  require "json"
+  
+  dev_config_file = ".dev.json"
+  template_file = ".dev.json.template"
+  
+  return if File.exist?(dev_config_file)
+  
+  unless File.exist?(template_file)
+    puts "Warning: #{template_file} not found. Skipping dev config setup."
+    return
+  end
+  
+  puts "Creating development configuration file..."
+  print "Enter your email address [matt@mattbriggs.net]: "
+  email = STDIN.gets.chomp
+  email = "matt@mattbriggs.net" if email.empty?
+  
+  print "Enter your password [ps]: "
+  password = STDIN.gets.chomp
+  password = "ps" if password.empty?
+  
+  config = {
+    "user" => {
+      "email" => email,
+      "password" => password
+    }
+  }
+  
+  File.write(dev_config_file, JSON.pretty_generate(config))
+  puts "✅ Created #{dev_config_file} with your credentials"
+  puts "   This file is ignored by git for security"
+end
+
 FileUtils.chdir APP_ROOT do
   # This script sets up your development environment automatically.
   # Run with --skip-server to avoid starting the dev server afterwards.
@@ -23,6 +57,9 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Preparing databases =="
   system! "bin/rails db:prepare"
   
+  puts "\n== Setting up development configuration =="
+  setup_dev_config
+  
   puts "\n== Running quality tools =="
   system! "bundle exec rubocop -A"
   system! "bin/rails test"
@@ -33,6 +70,7 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Setup complete! =="
   puts "See docs/SETUP.md for manual setup instructions"
   puts "See docs/DEVELOPING.md for development workflow"
+  puts "\nTo create an admin user, run: bin/create-admin"
 
   unless ARGV.include?("--skip-server")
     puts "\n== Starting development server =="
