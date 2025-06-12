@@ -11,6 +11,7 @@ class Post < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
 
   before_save :set_published_at
+  before_save :set_excerpt_if_blank
 
   def comment(user, content)
     comments.create!(
@@ -19,7 +20,6 @@ class Post < ApplicationRecord
     )
   end
 
-  before_save :set_excerpt_if_blank
 
   def auto_excerpt(limit: 160)
     return "" if content.blank?
@@ -32,15 +32,13 @@ class Post < ApplicationRecord
     "#{truncated}..."
   end
 
-  private
-
-  def set_published_at
+  private def set_published_at
     if status_changed? && published?
       self.published_at ||= Time.current
     end
   end
 
-  def set_excerpt_if_blank
+  private def set_excerpt_if_blank
     if excerpt.blank? && content.present?
       self.excerpt = auto_excerpt
     end

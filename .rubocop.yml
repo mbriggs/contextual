@@ -7,6 +7,21 @@ Style/ClassAndModuleChildren:
   Enabled: true
   EnforcedStyle: nested
 
+Style/NegatedIf:
+  Enabled: false
+
+Style/NegatedUnless:
+  Enabled: true
+  EnforcedStyle: both
+
+Lint/AssignmentInCondition:
+  Enabled: true
+  AllowSafeAssignment: false
+
+Style/AccessModifierDeclarations:
+  Enabled: true
+  EnforcedStyle: inline
+
 Minitest/AssertEmpty:
   Enabled: false
 

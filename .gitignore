@@ -13,6 +13,9 @@
 # Ignore development configuration
 /.dev.json
 
+# Ignore test coverage reports
+/coverage/
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*

@@ -1,12 +1,11 @@
 module Admin
   class PostsController < AdminController
-    before_action :set_post, only: [:show, :edit, :update, :destroy]
-
     def index
       @posts = Post.all.recent
     end
 
     def show
+      @post = Post.find(params[:id])
     end
 
     def new
@@ -14,6 +13,7 @@ module Admin
     end
 
     def edit
+      @post = Post.find(params[:id])
     end
 
     def create
@@ -27,6 +27,7 @@ module Admin
     end
 
     def update
+      @post = Post.find(params[:id])
       if @post.update(post_params)
         redirect_to admin_post_path(@post), notice: "Post was successfully updated."
       else
@@ -35,17 +36,12 @@ module Admin
     end
 
     def destroy
+      @post = Post.find(params[:id])
       @post.destroy!
       redirect_to admin_posts_path, notice: "Post was successfully deleted."
     end
 
-    private
-
-    def set_post
-      @post = Post.find(params[:id])
-    end
-
-    def post_params
+    private def post_params
       params.require(:post).permit(:title, :content, :status, :excerpt)
     end
   end

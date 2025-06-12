@@ -46,9 +46,9 @@ class CreateActiveStorageTables < ActiveRecord::Migration[7.0]
     end
   end
 
-  private
 
-  def primary_and_foreign_key_types
+
+  private def primary_and_foreign_key_types
     config = Rails.configuration.generators
     setting = config.options[config.orm][:primary_key_type]
     primary_key_type = setting || :primary_key

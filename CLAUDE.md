@@ -5,6 +5,90 @@
 - ❌ DON'T: Insert `# frozen_string_literal: true` in Ruby files  
 - ❌ DON'T: Use `require` statements in app/ files (use Rails autoloading)
 
+### Method Style [MANDATORY]
+- ✅ DO: Use inline `private def` syntax instead of separate `private` sections
+- ✅ DO: Set instance variables directly in controller actions (no before_action for simple finds)
+- ❌ DON'T: Create separate private sections unless you have many private methods
+
+### Conditional Style [MANDATORY]
+- ✅ DO: Prefer `if !condition` over `unless condition`
+- ✅ DO: Use multi-line conditionals over postfix conditionals
+- ✅ DO: Exception for guard clauses - `return if condition` is preferred
+- ✅ DO: Separate variable assignment from conditional logic
+- ❌ DON'T: Use variable assignment inside conditionals
+
+```ruby
+# CORRECT - Inline private methods
+class PostsController < ApplicationController
+  def show
+    @post = Post.find(params[:id])
+  end
+
+  def create
+    @post = Post.new(post_params)
+    if @post.save
+      redirect_to @post
+    else
+      render :new
+    end
+  end
+
+  private def post_params
+    params.require(:post).permit(:title, :content)
+  end
+end
+
+# INCORRECT - Separate private section for simple cases
+class PostsController < ApplicationController
+  def show
+    @post = Post.find(params[:id])
+  end
+
+  def create
+    @post = Post.new(post_params)
+    if @post.save
+      redirect_to @post
+    else
+      render :new
+    end
+  end
+
+  private
+
+  def post_params
+    params.require(:post).permit(:title, :content)
+  end
+end
+
+# CORRECT - Multi-line conditional with if !
+if !user.admin?
+  redirect_to root_path
+  return
+end
+
+# CORRECT - Guard clause exception
+return if !current_user
+
+# CORRECT - Separate assignment from conditional
+user = User.find_by(email: params[:email])
+if user
+  process_user(user)
+end
+
+# INCORRECT - Postfix conditional (except guard clauses)
+redirect_to root_path if !user.admin?
+
+# INCORRECT - Unless statement
+unless user.admin?
+  redirect_to root_path
+end
+
+# INCORRECT - Assignment in conditional
+if (user = User.find_by(email: params[:email]))
+  process_user(user)
+end
+```
+
 ## APPLICATION OVERVIEW [CRITICAL]
 
 ### Tech Stack [ALWAYS FOLLOW]
