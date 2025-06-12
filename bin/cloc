@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Count lines of code in the project, excluding common build/temp directories
+cloc --exclude-dir=coverage,tmp,log,vendor,node_modules,public .
