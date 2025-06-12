@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  include Logging
+
   allow_unauthenticated_access only: [:new, :create, :destroy]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later." }
 
@@ -11,17 +13,28 @@ class SessionsController < ApplicationController
   def create
     user = User.authenticate_by(params.permit(:email_address, :password))
     if user
+      logger.debug("Login successful for user: #{user.email_address}")
       start_new_session_for user
       redirect_to after_authentication_url, notice: "Welcome back!"
     else
+      logger.debug("Login failed for: #{params[:email_address]}")
       redirect_to new_session_path, alert: "Try another email address or password."
     end
   end
 
   def destroy
+    logger.debug("Logout request received")
+
+    # Resume session first to populate Current.session from cookie
+    # (skipped by allow_unauthenticated_access but needed for logout)
+    resume_session
+
     if Current.session
       terminate_session
+    else
+      logger.debug("No current session to terminate")
     end
+
     redirect_to new_session_path, notice: "You have been signed out."
   end
 
