@@ -26,39 +26,39 @@ begin
     
     # Re-read the merged coverage file
     full_data = JSON.parse(File.read(coverage_file))
+    all_sections = full_data.keys.reject { |k| k.match?(/timestamp/) }
   end
   
-  # Use the section with higher coverage (more recent/accurate data)
-  unit_tests_data = full_data['Unit Tests']&.dig('coverage')
-  minitest_data = full_data['Minitest']&.dig('coverage')
+  # Find the first valid coverage section
+  test_sections = all_sections.reject { |k| k.match?(/timestamp/) }
+  coverage_data = nil
+  section_name = nil
   
-  # Calculate totals for both to pick the better one
-  sections = {}
-  [['Unit Tests', unit_tests_data], ['Minitest', minitest_data]].each do |name, section_data|
-    next unless section_data
-    
-    total_lines = 0
-    covered_lines = 0
-    section_data.each do |file, info|
-      lines = info['lines']
-      total_lines += lines.count { |l| !l.nil? }
-      covered_lines += lines.count { |l| l && l > 0 }
+  # Try common section names first
+  ['Unit Tests', 'Minitest'].each do |name|
+    if full_data[name]&.dig('coverage')
+      coverage_data = full_data[name]['coverage']
+      section_name = name
+      break
     end
-    
-    percentage = total_lines > 0 ? (covered_lines.to_f / total_lines * 100) : 0
-    sections[name] = { data: section_data, percentage: percentage, covered: covered_lines, total: total_lines }
   end
   
-  # Use the section with higher coverage percentage
-  best_section = sections.max_by { |name, stats| stats[:percentage] }
+  # If no standard sections found, use the first test process section
+  if coverage_data.nil? && test_sections.any?
+    first_section = test_sections.first
+    if full_data[first_section]&.dig('coverage')
+      coverage_data = full_data[first_section]['coverage']
+      section_name = first_section
+    end
+  end
   
-  if best_section.nil?
+  if coverage_data.nil?
     puts "❌ No valid coverage data found in file."
     exit 1
   end
   
-  data = best_section[1][:data]
-  puts "📋 Using coverage data from: #{best_section[0]}"
+  data = coverage_data
+  puts "📋 Using coverage data from: #{section_name}"
   
 rescue JSON::ParserError
   puts "❌ Invalid coverage file format."
