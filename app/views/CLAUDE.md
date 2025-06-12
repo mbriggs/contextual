@@ -29,10 +29,27 @@
 - ✅ DO: Use `tag: :article` for semantic article cards
 - ❌ DON'T: Write custom card container classes
 
+### Form Helper [MANDATORY]
+- ✅ DO: Use `styled_form_with` for forms with styled fields and automatic button classes
+- ✅ DO: Use simple field methods for labeled forms: `form.text_field :title`
+- ✅ DO: Use `labeled: false` for auth/simple forms: `form.email_field :email, labeled: false`
+- ✅ DO: Use `hint:` parameter for field explanations
+- ✅ DO: Use `label:` parameter for custom label text
+- ✅ DO: Let `form.submit` use button styling automatically
+- ✅ DO: Use regular `form_with` when you need vanilla Rails behavior
+- ❌ DON'T: Write manual label/field/hint combinations
+- ❌ DON'T: Write custom field classes in views
+
 ### Helper Methods
+- `styled_form_with(*, **kwargs, &block)` - Form with custom FormBuilder
 - `button_link(text, url, variant: :primary, size: :medium, method: nil, confirm: nil, **options)`
 - `button_classes(variant: :primary, size: :medium, full_width_mobile: false)`
 - `card(padding: :medium, tag: :div, header: nil, header_class: nil, **options)`
+- `form.text_field(method, label: nil, hint: nil, labeled: true, **options)`
+- `form.text_area(method, label: nil, hint: nil, labeled: true, **options)`
+- `form.email_field(method, label: nil, hint: nil, labeled: true, **options)`
+- `form.password_field(method, label: nil, hint: nil, labeled: true, **options)`
+- `form.select(method, choices, options = {}, html_options = { label: nil, hint: nil, labeled: true })`
 
 ### Button Examples
 ```erb
@@ -47,13 +64,42 @@
 <%= form.submit "Save", class: "bg-blue-600 hover:bg-blue-700 text-white..." %>
 ```
 
+### Form Examples
+```erb
+<!-- CORRECT - Content forms with labels and hints -->
+<%= styled_form_with model: @post, local: true, class: "space-y-6" do |form| %>
+  <%= form.text_field :title %>
+  <%= form.text_area :excerpt, rows: 3, hint: "Optional - will auto-generate from content if left blank" %>
+  <%= form.text_area :content, rows: 15 %>
+  <%= form.select :status, [["Draft", "draft"], ["Published", "published"]], {}, { hint: "Drafts are only visible to admins" } %>
+  <%= form.submit "Save Post" %>
+<% end %>
+
+<!-- CORRECT - Auth forms (simple styling) -->
+<%= styled_form_with url: session_url, class: "contents" do |form| %>
+  <%= form.email_field :email_address, labeled: false, placeholder: "Enter your email address" %>
+  <%= form.password_field :password, labeled: false, placeholder: "Enter your password" %>
+  <%= form.submit "Sign in" %>
+<% end %>
+
+<!-- CORRECT - Custom labels -->
+<%= form.text_field :title, label: "Post Title" %>
+<%= form.text_area :content, label: "Article Content", hint: "Use Markdown for formatting" %>
+
+<!-- INCORRECT - Manual field markup -->
+<div>
+  <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-2" %>
+  <%= form.text_field :title, class: "w-full px-3 py-2 border border-gray-300..." %>
+</div>
+```
+
 ### Card Examples
 ```erb
 <!-- CORRECT - Using card helper -->
 <!-- Form card with header -->
 <%= card padding: :large, header: "Edit Post" do %>
   <%= form_with model: @post do |form| %>
-    <!-- form fields -->
+    <%= form.text_field :title %>
   <% end %>
 <% end %>
 
@@ -81,8 +127,18 @@
 - **`:danger`** - Red background, for destructive actions like delete
 - **`:success`** - Green background, for positive confirmations
 
+### Form Field Parameters
+- **`labeled: false`** - Disables label generation for simple auth-style forms
+- **`label: "Custom Text"`** - Override default humanized label text
+- **`hint: "Help text"`** - Adds gray help text below field
+- **Standard Rails options** - All normal form field options still work (placeholder, required, etc.)
+
 ### Convenience Parameters
 - **`method:`** - Automatically converts to `data-turbo-method` (e.g., `method: :delete`)
 - **`confirm:`** - Automatically converts to `data-turbo-confirm` (e.g., `confirm: "Are you sure?"`)
 - **`full_width_mobile:`** - Adds responsive width classes `w-full sm:w-auto` for form buttons
-```
+
+### Field Styling
+- **Labeled fields** (default): Full label + styled input + optional hint in `<div>` wrapper
+- **Simple fields** (`labeled: false`): Just styled input, no label or wrapper
+- **Auto button styling**: `form.submit` automatically uses `button_classes` unless custom class provided
