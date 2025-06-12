@@ -248,8 +248,12 @@ bin/coverage-report              # Detailed coverage analysis script
 - ✅ DO: Use code examples showing CORRECT vs INCORRECT patterns
 - ✅ DO: Focus on project-specific conventions and common mistakes
 - ✅ DO: Use emojis (✅❌📝🔧⚠️💡🚫) to make scanning easier for LLMs
+- ✅ DO: Provide **actionable patterns** with clear decision rules LLMs can apply
+- ✅ DO: Use **generic actionable guidance** over exhaustive scenario-by-scenario examples
+- ✅ DO: Give LLMs **decision frameworks** ("When X, do Y") rather than abstract principles
 - ❌ DON'T: Write explanatory text or background information
 - ❌ DON'T: Include general programming advice that applies everywhere
+- ❌ DON'T: Be overly prescriptive when pattern-based rules can cover multiple cases
 
 ## PROJECT MANAGEMENT [TICKETS SYSTEM]
 

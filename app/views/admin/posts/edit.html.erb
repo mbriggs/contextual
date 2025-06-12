@@ -49,9 +49,9 @@
       </div>
 
       <div class="flex justify-between">
-        <%= link_to "Cancel", admin_post_path(@post), class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors" %>
+        <%= button_link "Cancel", admin_post_path(@post), variant: :secondary %>
         <div class="space-x-3">
-          <%= form.submit "Update Post", class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors" %>
+          <%= form.submit "Update Post", class: button_classes %>
         </div>
       </div>
     <% end %>
