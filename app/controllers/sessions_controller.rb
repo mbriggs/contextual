@@ -39,8 +39,8 @@ class SessionsController < ApplicationController
       config = JSON.parse(File.read(dev_config_file))
       @default_email = config.dig("user", "email")
       @default_password = config.dig("user", "password")
-    rescue JSON::ParserError
-      # Silently ignore invalid JSON in development
+    rescue JSON::ParserError => e
+      logger.warn("Failed to parse .dev.json: #{e.message}")
     end
   end
 end

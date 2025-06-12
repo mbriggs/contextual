@@ -28,6 +28,7 @@ class Post < ApplicationRecord
     return plain_text if plain_text.length <= limit
 
     truncated = plain_text.truncate(limit, separator: " ", omission: "")
+
     "#{truncated}..."
   end
 
