@@ -1,23 +1,27 @@
-# Logging is a mixin to enable class based loggers. By default, these loggers will be turned off, and be set to the
-# same log level as Rails.logger. To control a logger, you can set config.x.logging in an environment config
-# (e.g. config/environments/development.rb). The config is a string in the following format:
+# Class-based logging system with granular per-class control.
 #
-#   "MyClass->debug,MyOtherClass,-DisabledClass,_all"
+# Usage:
+#   class MyClass
+#     include Logging
+#   end
 #
-# In this example:
-# - MyClass logger will be set to debug - MyOtherClass logger will be set to whatever Rails.logger is set to
-# - DisabledClass will have its logger disabled. This happens via the - prefix
-# - all other loggers will be enabled. _all is a magic logger name to allow for this
-# - without specifying _all, all unmentioned loggers will be disabled by default
+#   MyClass.logger.info("Class-level logging")
+#   MyClass.new.logger.info("Instance-level logging")
 #
-# To add this logging system to a class, simply `include Logging`. This will provide a class level as well as an
-# instance level logger.
+# Configuration:
+#   Set config.x.logging in environment files:
+#   config.x.logging = "MyClass->debug,OtherClass,-DisabledClass,_all"
 #
-# note: Loggers will log to STDERR, the way God intended.
+#   - MyClass->debug: Set MyClass logger to debug level
+#   - OtherClass: Enable with Rails.logger level
+#   - -DisabledClass: Disable logging (logs to /dev/null)
+#   - _all: Enable all unspecified loggers (disabled by default)
+#
+# Loggers output to STDERR and are tagged with the class name.
 module Logging
   extend ActiveSupport::Concern
 
-  # Set the log tags for the app, this is done in the log_tags initializer
+  # Global configuration management
   def self.config=(val)
     @config = Taglist.parse(val)
   end
@@ -43,6 +47,22 @@ module Logging
       @logger ||= logger.tagged(name)
     end
 
+    # Test helper for injecting custom configuration and capturing output
+    def with_test_logger(config, output: StringIO.new)
+      old_logger = @logger
+      @logger = nil
+
+      # For testing, always use the provided output stream regardless of config
+      logger = ActiveSupport::TaggedLogging.new(Logger.new(output))
+      logger.level = config.level(name)
+      logger.formatter = Rails.logger.formatter
+
+      @logger = logger.tagged(name)
+      yield @logger, output
+    ensure
+      @logger = old_logger
+    end
+
     def log_string(string)
       if Rails.env.production?
         string.squish
@@ -64,8 +84,7 @@ module Logging
     to: :class
 
   class Taglist
-    # Parse the taglist config
-    #
+    # Parse configuration string into include/exclude rules
     def self.parse(taglist_config)
       include = {}
       exclude = {}
@@ -76,10 +95,12 @@ module Logging
         level = nil
         if tag.include?("->")
           tag, level = tag.split("->")
+          tag = tag.strip
+          level = level.strip if level
         end
 
         if tag.start_with?("-")
-          tag = tag[1..]
+          tag = tag[1..].strip
           exclude[tag] = level
         else
           include[tag] = level
@@ -89,14 +110,12 @@ module Logging
       Taglist.new(include: include, exclude: exclude)
     end
 
-    # A Taglist without inclusions or exclusions
-    #
+    # Empty taglist (disables all loggers)
     def self.blank
       @blank ||= new
     end
 
-    # A Taglist built from the rails logging config, if present
-    #
+    # Build taglist from Rails config.x.logging
     def self.from_config
       config = Rails.application.config.x.logging
       if config.present?
@@ -127,7 +146,7 @@ module Logging
       tags.any? { |tag| include?(tag) } && !tags.any? { |tag| exclude?(tag) }
     end
 
-    # Configured level for tag, or the Rails.logger level if not present
+    # Get configured level for tag, fallback to Rails.logger level
     def level(tag)
       include[tag] || exclude[tag] || Rails.logger.level
     end
