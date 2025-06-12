@@ -14,19 +14,27 @@
 - **Consistency**: Follow existing patterns in the codebase
 - **Modern syntax**: Rails 8 with Turbo, not legacy Rails patterns
 
-## BUTTON HELPER USAGE [HIGHEST PRIORITY]
+## HELPER USAGE [HIGHEST PRIORITY]
 
-### Consistent Button Styling
+### Button Helper
 - ✅ DO: Use `button_link` helper for all button-like links
 - ✅ DO: Use `button_classes` helper for form submit buttons
 - ✅ DO: Use appropriate variants: `:primary`, `:secondary`, `:danger`, `:success`
 - ❌ DON'T: Write custom button classes in views
 
+### Card Helper
+- ✅ DO: Use `card` helper for all white card containers
+- ✅ DO: Use `padding: :large` for forms, `:medium` for content cards, `:small` for compact cards
+- ✅ DO: Use `header:` parameter for consistent card titles
+- ✅ DO: Use `tag: :article` for semantic article cards
+- ❌ DON'T: Write custom card container classes
+
 ### Helper Methods
 - `button_link(text, url, variant: :primary, size: :medium, method: nil, confirm: nil, **options)`
 - `button_classes(variant: :primary, size: :medium, full_width_mobile: false)`
+- `card(padding: :medium, tag: :div, header: nil, header_class: nil, **options)`
 
-### Examples
+### Button Examples
 ```erb
 <!-- CORRECT - Using button helpers -->
 <%= button_link "New Post", new_admin_post_path %>
@@ -37,6 +45,34 @@
 <!-- INCORRECT - Custom button classes -->
 <%= link_to "New Post", new_admin_post_path, class: "bg-blue-600 hover:bg-blue-700..." %>
 <%= form.submit "Save", class: "bg-blue-600 hover:bg-blue-700 text-white..." %>
+```
+
+### Card Examples
+```erb
+<!-- CORRECT - Using card helper -->
+<!-- Form card with header -->
+<%= card padding: :large, header: "Edit Post" do %>
+  <%= form_with model: @post do |form| %>
+    <!-- form fields -->
+  <% end %>
+<% end %>
+
+<!-- Article listing card -->
+<%= card tag: :article, padding: :medium do %>
+  <h2><%= post.title %></h2>
+  <p><%= post.excerpt %></p>
+<% end %>
+
+<!-- Card with custom header styling -->
+<%= card header: "Dashboard", header_class: "text-2xl font-semibold text-blue-900 mb-4" do %>
+  <!-- content -->
+<% end %>
+
+<!-- INCORRECT - Manual card classes -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Edit Post</h1>
+  <!-- content -->
+</div>
 ```
 
 ### Variants

@@ -6,7 +6,7 @@
   <% if @posts.any? %>
     <div class="space-y-8">
       <% @posts.each do |post| %>
-        <article class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <%= card tag: :article, padding: :medium do %>
           <div class="flex justify-between items-start mb-4">
             <h2 class="text-xl font-semibold text-gray-900">
               <%= link_to post.title, post, class: "hover:text-blue-600 transition-colors" %>
@@ -20,7 +20,7 @@
           <div class="text-sm text-gray-500">
             Published <%= time_ago_in_words(post.created_at) %> ago
           </div>
-        </article>
+        <% end %>
       <% end %>
     </div>
   <% else %>

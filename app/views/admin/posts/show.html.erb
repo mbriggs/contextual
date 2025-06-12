@@ -8,7 +8,7 @@
       <div class="flex justify-between items-start mb-4">
         <h1 class="text-4xl font-bold text-gray-900"><%= @post.title %></h1>
         <div class="flex items-center space-x-4">
-          <span class="px-3 py-1 text-sm font-medium rounded-full <%= @post.published? ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+          <span class="px-3 py-1 text-sm font-medium rounded-full <%= post_status_classes(@post) %>">
             <%= @post.status.humanize %>
           </span>
           <%= button_link "Edit", edit_admin_post_path(@post) %>
